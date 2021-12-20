@@ -4,6 +4,8 @@ import {ModalContext, ModalProvider} from "./Modal/ModalContext";
 import {ModalCard1} from "./Modal/ModalCard";
 import {ModalFooter} from "./Modal/ModalWrapper";
 import {OptimizeData} from "./OptimizeDataState/OptimizeData";
+import {FormApp} from "./Forms/Forms";
+
 
 const ChildComp: FC = () => {
 
@@ -41,8 +43,9 @@ function App() {
             {/*    <ChildComp/>*/}
             {/*</ModalProvider>*/}
 
-            <OptimizeData/>
+            {/*<OptimizeData/>*/}
 
+            <FormApp/>
         </div>
     );
 }
