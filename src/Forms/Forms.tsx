@@ -1,11 +1,5 @@
 import React, {ChangeEvent, FC, useState} from "react";
 
-type ParamType =
-    | { type: 'string', value?: string, mandatory: boolean }
-    | { type: 'json', value?: {}, mandatory: boolean }
-    | { type: 'integer', value?: number, mandatory: boolean }
-
-
 type TypeMap<T> =
     T extends 'string'
         ? string
@@ -17,6 +11,11 @@ type TypeMap<T> =
                 ? object
 
                 : never;
+
+type ParamType =
+    | { type: 'string', value?: TypeMap<'string'>, mandatory: boolean }
+    | { type: 'json', value?: TypeMap<'json'>, mandatory: boolean }
+    | { type: 'integer', value?: TypeMap<'integer'>, mandatory: boolean }
 
 type Parameter = {
     name: string;
