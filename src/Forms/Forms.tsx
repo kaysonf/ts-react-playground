@@ -1,21 +1,16 @@
 import React, {ChangeEvent, FC, useState} from "react";
 
-type TypeMap<T> =
-    T extends 'string'
-        ? string
 
-        : T extends 'integer'
-            ? number
+type TypeMap = {
+    string: string;
+    integer: number;
+    json: object;
+}
+type Distribute<TYPE> = TYPE extends keyof TypeMap ? {type: TYPE; value?: TypeMap[TYPE]; mandatory: boolean} : never;
+type DistributeType<TYPE> = TYPE extends keyof TypeMap ? TypeMap[TYPE] : never;
 
-            : T extends 'json'
-                ? object
-
-                : never;
-
-type ParamType =
-    | { type: 'string', value?: TypeMap<'string'>, mandatory: boolean }
-    | { type: 'json', value?: TypeMap<'json'>, mandatory: boolean }
-    | { type: 'integer', value?: TypeMap<'integer'>, mandatory: boolean }
+type ParamType = Distribute<keyof TypeMap>
+type TypeMapTypes = DistributeType<keyof TypeMap>
 
 type Parameter = {
     name: string;
@@ -23,13 +18,13 @@ type Parameter = {
 }
 
 type InputProps = React.ComponentProps<'input'>
-type ValidateFn<T> = (data: TypeMap<T>) => string[];
-type InputFormProps<T> = InputProps & {
+type ValidateFn<T extends keyof TypeMap> = (data: TypeMap[T]) => string[];
+type InputFormProps<T extends keyof TypeMap> = InputProps & {
     validate: ValidateFn<T>;
-    value: TypeMap<T>;
+    value: TypeMap[T];
 }
 
-function InputForm<T>(props: InputFormProps<T>) {
+function InputForm<T extends keyof TypeMap>(props: InputFormProps<T>) {
 
     const {validate, value, ...inputProps} = props;
 

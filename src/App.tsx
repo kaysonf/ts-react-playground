@@ -1,10 +1,12 @@
 import React, {FC, useContext, useState} from 'react';
 import './App.css';
-import {ModalContext, ModalProvider} from "./Modal/ModalContext";
+import {ModalContext} from "./Modal/ModalContext";
 import {ModalCard1} from "./Modal/ModalCard";
 import {ModalFooter} from "./Modal/ModalWrapper";
-import {OptimizeData} from "./OptimizeDataState/OptimizeData";
-import {FormApp} from "./Forms/Forms";
+import {StateTypeDesignComp} from "./StateTypeDesign/Component";
+import {RenderingComp} from "./RenderingAndStates/RenderingComp";
+import {ProviderAppTest} from "./ProviderRendering/ProviderRender";
+import {WhoRenders} from "./WhoRenders/WhoRenders";
 
 
 const ChildComp: FC = () => {
@@ -45,7 +47,15 @@ function App() {
 
             {/*<OptimizeData/>*/}
 
-            <FormApp/>
+            {/*<FormApp/>*/}
+
+            {/*<StateTypeDesignComp/>*/}
+
+            {/*<RenderingComp/>*/}
+
+            {/*<ProviderAppTest/>*/}
+
+            <WhoRenders/>
         </div>
     );
 }
