@@ -7,6 +7,8 @@ import {StateTypeDesignComp} from "./StateTypeDesign/Component";
 import {RenderingComp} from "./RenderingAndStates/RenderingComp";
 import {ProviderAppTest} from "./ProviderRendering/ProviderRender";
 import {WhoRenders} from "./WhoRenders/WhoRenders";
+import {HooksTest} from "./WhoRenders/HooksTest";
+import {OptimizeData} from "./OptimizeDataState/OptimizeData";
 
 
 const ChildComp: FC = () => {
@@ -45,7 +47,7 @@ function App() {
             {/*    <ChildComp/>*/}
             {/*</ModalProvider>*/}
 
-            {/*<OptimizeData/>*/}
+            <OptimizeData/>
 
             {/*<FormApp/>*/}
 
@@ -55,7 +57,9 @@ function App() {
 
             {/*<ProviderAppTest/>*/}
 
-            <WhoRenders/>
+            {/*<WhoRenders/>*/}
+
+            {/*<HooksTest/>*/}
         </div>
     );
 }

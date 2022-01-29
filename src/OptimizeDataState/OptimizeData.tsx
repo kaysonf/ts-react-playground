@@ -1,8 +1,7 @@
-import React, {FC, useState} from "react";
+import React, {Dispatch, FC, useReducer} from "react";
 
 type NestedProp = {
     names: string[];
-    heights: number[];
 }
 
 export type ComplexState = {
@@ -10,25 +9,29 @@ export type ComplexState = {
     groupName: string
 }
 
-const Child: FC<ComplexState & { forceRenderParent: () => void; charToAdd: string; heightToAdd: number }> = (props) => {
-    const {forceRenderParent, nestedProp, charToAdd, heightToAdd} = props;
+
+function gen100_000<T>(data: T) {
+    return [...Array(100_000)].map(_ => data);
+}
+
+const Child: FC<ComplexState & { dispatch: Dispatch<Action>; charToAdd: string; }> = (props) => {
+    const {dispatch, nestedProp, charToAdd,} = props;
 
     return (
         <>
             <h3>CHILD</h3>
             <h5>names: {nestedProp.names.join('')}</h5>
-            <h5>heights {nestedProp.heights.join('')}</h5>
 
             <button onClick={() => {
-                nestedProp.names.push(charToAdd);
-                forceRenderParent();
+                renTiming = Date.now();
+                dispatch({type: 'optimizedChar', char: gen100_000(charToAdd)});
             }}>add {charToAdd} to names
             </button>
 
             <button onClick={() => {
-                nestedProp.heights.push(heightToAdd);
-                forceRenderParent();
-            }}>add {heightToAdd} to names
+                renTiming = Date.now();
+                dispatch({type: 'spreadChar', char: gen100_000(charToAdd)});
+            }}>add {charToAdd} to names with SPREAD
             </button>
         </>
 
@@ -38,27 +41,57 @@ const Child: FC<ComplexState & { forceRenderParent: () => void; charToAdd: strin
 const dataOutsideComponent: ComplexState = { // EXISTS OUTSIDE COMPONENT
     nestedProp: {
         names: [],
-        heights: []
     },
     groupName: 'default name'
 }
 
-export const OptimizeData: FC = () => { // this can be a context + provider instead
-    const [, setState] = useState({});
+type Action =
+    | { type: 'optimizedChar', char: string[] }
+    | { type: 'spreadChar', char: string[] }
 
-    const forceRender = () => {
-        setState({});
+const optimizedDataReducer = (curr: () => ComplexState, action: Action): () => ComplexState => {
+    switch (action.type) {
+        case 'optimizedChar': {
+            dataOutsideComponent.nestedProp.names.push(...action.char);
+            renTiming = Date.now() - renTiming;
+            return () => dataOutsideComponent;
+        }
+
+        case "spreadChar": {
+            dataOutsideComponent.nestedProp.names.push(...action.char);
+
+            const clone = {
+                ...dataOutsideComponent,
+                nestedProp: {
+                    names: [...dataOutsideComponent.nestedProp.names],
+                }
+            }
+            renTiming = Date.now() - renTiming;
+            return () => clone;
+        }
+
     }
+
+}
+
+const getData = () => dataOutsideComponent;
+
+let renTiming: number;
+
+export const OptimizeData: FC = () => { // this can be a context + provider instead
+    const [_data, dispatch] = useReducer(optimizedDataReducer, getData);
+
+    const data = _data();
+
+    console.log('renderTiming', renTiming);
 
     // pass in data
     return (
         <>
             <h1>Parent</h1>
-            <h2>names: {dataOutsideComponent.nestedProp.names.join('')}</h2>
-            <h2>heights: {dataOutsideComponent.nestedProp.heights.join('')}</h2>
+            <h2>names: {data.nestedProp.names.join('')}</h2>
 
-            <Child {...dataOutsideComponent} forceRenderParent={forceRender} charToAdd={'a'} heightToAdd={1}/>
-            <Child {...dataOutsideComponent} forceRenderParent={forceRender} charToAdd={'b'} heightToAdd={2}/>
+            <Child {...data} dispatch={dispatch} charToAdd={'a'} />
         </>
     )
 }
